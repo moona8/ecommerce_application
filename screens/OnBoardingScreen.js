@@ -1,18 +1,19 @@
 import * as React from 'react';
 import {View, Text, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-
+89
 import Onboarding from 'react-native-onboarding-swiper';
 
 const OnBoardingScreen = () => {
   const navigation = useNavigation()
   return (
 
+
     // <Text onPress={() => navigation.navigate("Loginscreen")}>login</Text>
     <Onboarding
     
-      onSkip={() => navigation.navigate("Loginscreen")}
-      onDone={() => navigation.navigate("Loginscreen")}
+      onSkip={() => navigation.navigate("LoginScreen")}
+      onDone={() => navigation.navigate("LoginScreen")}
       pages={[
         {
           backgroundColor: '#a6e4d0',
