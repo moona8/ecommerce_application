@@ -6,10 +6,11 @@ import {
   Image,
   Platform,
   StyleSheet,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
+import {firebaseAuth, firebaseDB} from '../config/firebaseConfig';
 // import {AuthContext} from '../navigation/AuthProvider';
 
 const LoginScreen = ({navigation}) => {
@@ -17,18 +18,30 @@ const LoginScreen = ({navigation}) => {
   const [password, setPassword] = useState();
 
   // const {login, googleLogin, fbLogin} = useContext(AuthContext);
+  const login = () => {
+    firebaseAuth
+      .signInWithEmailAndPassword(email, password)
+      .then(res => {
+        // /users/uid
+        return firebaseDB.ref(`/users/${res.user.uid}`).get();
+      })
+      .then(snap => {
+        console.log('SNAP', snap.val());
+        navigation.navigate('TabNav')
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        source={require('../assets/logo.png')}
-        style={styles.logo}
-      />
+      <Image source={require('../assets/logo.png')} style={styles.logo} />
       <Text style={styles.text}>ECOMMERCE APP</Text>
 
       <FormInput
         labelValue={email}
-        onChangeText={(userEmail) => setEmail(userEmail)}
+        onChangeText={userEmail => setEmail(userEmail)}
         placeholderText="Email"
         iconType="user"
         keyboardType="email-address"
@@ -38,7 +51,7 @@ const LoginScreen = ({navigation}) => {
 
       <FormInput
         labelValue={password}
-        onChangeText={(userPassword) => setPassword(userPassword)}
+        onChangeText={userPassword => setPassword(userPassword)}
         placeholderText="Password"
         iconType="lock"
         secureTextEntry={true}
@@ -52,8 +65,6 @@ const LoginScreen = ({navigation}) => {
       <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>
       </TouchableOpacity>
-
-      
 
       <TouchableOpacity
         style={styles.forgotButton}
@@ -73,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 50
+    paddingTop: 50,
   },
   logo: {
     height: 150,

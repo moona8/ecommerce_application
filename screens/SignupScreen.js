@@ -1,24 +1,77 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, TouchableOpacity, Platform, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
+import {firebaseAuth, firebaseDB} from '../config/firebaseConfig';
 // import SocialButton from '../components/SocialButton';
 // import {AuthContext} from '../navigation/AuthProvider';
 
 const SignupScreen = ({navigation}) => {
+  const [name, setname] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [city, setcity] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
+  // const {register} = useContext(AuthContext);
 
-//   const {register} = useContext(AuthContext);
+  const register = () => {
+    // console.log('running');
+    firebaseAuth
+      .createUserWithEmailAndPassword(email, password)
+      .then(response => {
+        const user = response.user;
+        const userDetails = {
+          uid: user.uid,
+          email,
+          city,
+          name,
+        };
+        return firebaseDB
+          .ref('/')
+          .child('users')
+          .child(user.uid)
+          .set(userDetails);
+      })
+      .then(snap => {
+        console.log('SNAP', snap);
+        navigation.navigate('TabNav')
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.text}>Create an account</Text>
 
       <FormInput
+        labelValue={name}
+        onChangeText={userName => setname(userName)}
+        placeholderText="Username"
+        iconType="user"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+
+      <FormInput
+        labelValue={city}
+        onChangeText={userCity => setcity(userCity)}
+        placeholderText="Enter your City"
+        iconType="lock"
+        secureTextEntry={true}
+      />
+
+      <FormInput
         labelValue={email}
-        onChangeText={(userEmail) => setEmail(userEmail)}
+        onChangeText={userEmail => setEmail(userEmail)}
         placeholderText="Email"
         iconType="user"
         keyboardType="email-address"
@@ -28,7 +81,7 @@ const SignupScreen = ({navigation}) => {
 
       <FormInput
         labelValue={password}
-        onChangeText={(userPassword) => setPassword(userPassword)}
+        onChangeText={userPassword => setPassword(userPassword)}
         placeholderText="Password"
         iconType="lock"
         secureTextEntry={true}
@@ -36,7 +89,7 @@ const SignupScreen = ({navigation}) => {
 
       <FormInput
         labelValue={confirmPassword}
-        onChangeText={(userPassword) => setConfirmPassword(userPassword)}
+        onChangeText={userPassword => setConfirmPassword(userPassword)}
         placeholderText="Confirm Password"
         iconType="lock"
         secureTextEntry={true}
@@ -62,14 +115,12 @@ const SignupScreen = ({navigation}) => {
         </Text>
       </View>
 
-     
-
       <TouchableOpacity
         style={styles.navButton}
         onPress={() => navigation.navigate('LoginScreen')}>
         <Text style={styles.navButtonText}>Have an account? Sign In</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -77,11 +128,10 @@ export default SignupScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f9fafd',
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+    paddingTop: 50,
   },
   text: {
     fontFamily: 'Kufam-SemiBoldItalic',
