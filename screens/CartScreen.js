@@ -8,41 +8,12 @@ import {
 } from 'react-native';
 import React from 'react';
 
-export default function HomeScreen() {
+const CartScreen = () => {
   return (
     <View style={styles.container}>
-      {/*  catiories */}
-      <View style={styles.picContainer}>
-        <TouchableOpacity style={styles.viewChild}>
-          <Image
-            source={require('../assets/alll.png')}
-            style={{width: '100%', height: '100%', borderRadius: 50}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.viewChild}>
-          <Image
-            source={require('../assets/men.jpg')}
-            style={{width: '100%', height: '100%', borderRadius: 50}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.viewChild}>
-          <Image
-            source={require('../assets/women.jpg')}
-            style={{width: '100%', height: '100%', borderRadius: 50}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.viewChild}>
-          <Image
-            source={require('../assets/kids.jpg')}
-            style={{width: '100%', height: '100%', borderRadius: 50}}
-          />
-        </TouchableOpacity>
-      </View>
-
       {/* product list */}
 
       <ScrollView style={styles.productList}>
-        <Text style={styles.productNo}>3</Text>
         <View style={styles.product}>
           <View style={styles.img}>
             <Image
@@ -57,42 +28,43 @@ export default function HomeScreen() {
               <Text style={styles.productRate}>$35</Text>
               <View style={styles.IncDec}>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={{textAlign:'center' ,}}>+</Text>
+                  <Text style={{textAlign: 'center'}}>+</Text>
                 </TouchableOpacity>
                 <Text style={styles.productNo}>3</Text>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={{textAlign:'center' ,}}>-</Text>
+                  <Text style={{textAlign: 'center'}}>-</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
         </View>
       </ScrollView>
+      {/* price Detail */}
+      <View style={styles.priceDetail}>
+        <Text style={{ fontSize: 22,fontWeight: '500',color:'black',} }>Price Detail</Text>
+        <View style={styles.pricing}>
+          <Text style={styles.text}>price</Text>
+          <Text style={styles.text}>$540</Text>
+        </View>
+        <View style={styles.pricing}>
+          <Text style={styles.text}>Delivery</Text>
+          <Text style={styles.text}>Free</Text>
+        </View>
+        <View style={styles.pricing}>
+          <Text style={styles.text}>Payable Ampount</Text>
+          <Text style={styles.text}>$540</Text>
+        </View>
+        <TouchableOpacity style={styles.placeOrder}>
+          <Text style={{fontWeight: '500',color:'black',textAlign: 'center',}}>Place Order</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-}
+};
+export default CartScreen;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  picContainer: {
-    // flex: 1,
-    flexDirection: 'row',
-    height: '25%',
-    borderWidth: 2,
-  },
-  viewChild: {
-    height: 100,
-    marginHorizontal: '2.5%',
-    width: '20%',
-    backgroundColor: 'red',
-    borderRadius: 50,
-    borderWidth: 2,
-  },
   productList: {
-    // backgroundColor: 'red',
-    // flex: 1,
     flexDirection: 'column',
     borderWidth: 2,
   },
@@ -106,7 +78,6 @@ const styles = StyleSheet.create({
     marginHorizontal: '2.5%',
     width: '20%',
     backgroundColor: 'red',
-    // borderRadius: 50,
     borderWidth: 2,
   },
   productDetail: {
@@ -146,7 +117,37 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     height: 20,
     width: 25,
-
+  },
+  // detail
+  priceDetail: {
+    // borderWidth: 2,
+    width: '100%',
+    marginLeft: 10,
+    width: '95%',
+    marginTop: 10,
+    height:40
+  },
+  pricing: {
+    borderWidth: 2,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    //  fontWeight:' bold'
+    height:35,
+    
+  },
+  text:{
+    fontSize: 18,
+    fontWeight: '500',
+    color:'black',
+  },
+  placeOrder: {
+    borderWidth: 2,
+    textAlign: 'center',
+    justifyContent: 'center',
+    width: 100,
+    height: 20,
+    marginLeft: '35%',
+    marginTop: 10,
   },
 });
-//rnf

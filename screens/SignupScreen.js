@@ -9,43 +9,74 @@ import {
 } from 'react-native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
+import Alert from '../components/Alert';
+import {getFormaterdErrorMessage} from "../utils/helpers"
 import {firebaseAuth, firebaseDB} from '../config/firebaseConfig';
-// import SocialButton from '../components/SocialButton';
-// import {AuthContext} from '../navigation/AuthProvider';
 
 const SignupScreen = ({navigation}) => {
-  const [name, setname] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [city, setcity] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
-  // const {register} = useContext(AuthContext);
+  const [name, setname] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [city, setcity] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateFeilds = () => {
+    if (
+      name === '' ||
+      email === '' ||
+      password === '' ||
+      city === '' ||
+      confirmPassword === ''
+    ) {
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
+      throw new Error('All feilds are required');
+    }
+    else if(password!==confirmPassword){
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
+      throw new Error('Password not matched');
+    }
+  };
 
   const register = () => {
-    // console.log('running');
-    firebaseAuth
-      .createUserWithEmailAndPassword(email, password)
-      .then(response => {
-        const user = response.user;
-        const userDetails = {
-          uid: user.uid,
-          email,
-          city,
-          name,
-        };
-        return firebaseDB
-          .ref('/')
-          .child('users')
-          .child(user.uid)
-          .set(userDetails);
-      })
-      .then(snap => {
-        console.log('SNAP', snap);
-        navigation.navigate('TabNav')
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      validateFeilds();
+
+      firebaseAuth
+        .createUserWithEmailAndPassword(email, password)
+        .then(response => {
+          const user = response.user;
+          const userDetails = {
+            uid: user.uid,
+            email,
+            city,
+            name,
+          };
+          return firebaseDB
+            .ref('/')
+            .child('users')
+            .child(user.uid)
+            .set(userDetails);
+        })
+        .then(snap => {
+          console.log('SNAP', snap);
+          navigation.navigate('TabNav');
+        })
+        .catch(error => {
+          setErrorMessage(getFormaterdErrorMessage(error.message));
+          console.log(error)
+          setTimeout(() => {
+            setErrorMessage('');
+          }, 3000);
+
+        });
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
 
   return (
@@ -99,6 +130,7 @@ const SignupScreen = ({navigation}) => {
         buttonTitle="Sign Up"
         onPress={() => register(email, password)}
       />
+      {errorMessage !== '' ? <Alert message={errorMessage} /> : null}
 
       <View style={styles.textPrivate}>
         <Text style={styles.color_textPrivate}>
