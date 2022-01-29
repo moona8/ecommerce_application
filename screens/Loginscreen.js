@@ -11,13 +11,14 @@ import {
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import {firebaseAuth, firebaseDB} from '../config/firebaseConfig';
-// import {AuthContext} from '../navigation/AuthProvider';
+import {AppContext} from '../utils/globalState';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
 
-  // const {login, googleLogin, fbLogin} = useContext(AuthContext);
+  const { setUser} = useContext(AppContext);
+
   const login = () => {
     firebaseAuth
       .signInWithEmailAndPassword(email, password)
@@ -26,8 +27,8 @@ const LoginScreen = ({navigation}) => {
         return firebaseDB.ref(`/users/${res.user.uid}`).get();
       })
       .then(snap => {
-        console.log('SNAP', snap.val());
-        navigation.navigate('TabNav')
+        setUser(snap.val())
+        navigation.navigate('TabNav');
       })
       .catch(err => {
         console.log(err);

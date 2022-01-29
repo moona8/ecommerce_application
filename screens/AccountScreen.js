@@ -1,22 +1,25 @@
-import { View, Text ,StyleSheet} from 'react-native';
-import React from 'react';
+import { View, Text ,StyleSheet,} from 'react-native';
+import React,{useContext} from 'react';
+import {AppContext} from '../utils/globalState';
 
 export default function AccountScreen() {
+  const { user} = useContext(AppContext);
   return (
+
     <View>
       <View style={styles.userDetails}>
         <Text style={{ fontSize: 22,fontWeight: '500',color:'black',} }>User Detail</Text>
         <View style={styles.details}>
           <Text style={styles.text}>Name :</Text>
-          <Text style={styles.text}>moona</Text>
+          <Text style={styles.text}>{user?.name}</Text>
         </View>
         <View style={styles.details}> 
           <Text style={styles.text}>Email :</Text>
-          <Text style={styles.text}>abc@gmau=il.com</Text>
+          <Text style={styles.text}>{user?.email}</Text>
         </View>
         <View style={styles.details}>
           <Text style={styles.text}>City :</Text>
-          <Text style={styles.text}>Karachi</Text>
+          <Text style={styles.text}>{user?.city}</Text>
         </View>
       </View>
     </View>
