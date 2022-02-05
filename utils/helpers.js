@@ -10,6 +10,12 @@ export const getFormaterdErrorMessage = message => {
     case '(auth/weak-password).':
       return 'Weak password';
 
+    case '(auth/user-not-found).':
+      return 'User not found';
+
+    case '(auth/wrong-password).':
+      return 'Wrong password';
+
     default:
       break;
   }

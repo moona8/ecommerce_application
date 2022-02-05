@@ -1,4 +1,5 @@
-import React, {useContext, useState} from 'react';
+
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,32 +13,65 @@ import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import {firebaseAuth, firebaseDB} from '../config/firebaseConfig';
 import {AppContext} from '../utils/globalState';
+import Alert from '../components/Alert';
+import {getFormaterdErrorMessage} from "../utils/helpers"
 
 const LoginScreen = ({navigation}) => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const { setUser} = useContext(AppContext);
+  const {setUser} = useContext(AppContext);
+  const validateFeilds = () => {
+    if (email === '' || password === '') {
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
+      throw new Error('All feilds are required');
+    } 
+  };
 
   const login = () => {
-    firebaseAuth
-      .signInWithEmailAndPassword(email, password)
-      .then(res => {
-        // /users/uid
-        return firebaseDB.ref(`/users/${res.user.uid}`).get();
-      })
-      .then(snap => {
-        setUser(snap.val())
-        navigation.navigate('TabNav');
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      validateFeilds();
+      firebaseAuth
+        .signInWithEmailAndPassword(email, password)
+        .then(res => {
+          // /users/uid
+          // return firebaseDB.ref(`/users/${res.user.uid}`).get();
+        })
+        // .then(snap => {
+        //   console.log(snap.val());
+        //   // setUser(snap.val());
+        //   // navigation.navigate('TabNav');
+        // })
+        .catch(error => {
+          setErrorMessage(getFormaterdErrorMessage(error.message));
+          console.log(error)
+          setTimeout(() => {
+            setErrorMessage('');
+          }, 3000);
+
+        });
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
+
+  useEffect(() => {
+    firebaseAuth.onAuthStateChanged(user => {
+      if (user.uid) {
+        firebaseDB.ref(`/users/${user.uid}`).on("value", snap => {
+          setUser(snap.val());
+          navigation.navigate('TabNav');
+        });
+      }
+    });
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image source={require('../assets/logo.png')} style={styles.logo} />
+      <Image source={require('../assets/logo.jpg')} style={styles.logo} />
       <Text style={styles.text}>ECOMMERCE APP</Text>
 
       <FormInput
@@ -63,10 +97,10 @@ const LoginScreen = ({navigation}) => {
         onPress={() => login(email, password)}
       />
 
-      <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
+      {/* <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>
-      </TouchableOpacity>
-
+      </TouchableOpacity> */}
+      {errorMessage !== '' ? <Alert message={errorMessage} /> : null}
       <TouchableOpacity
         style={styles.forgotButton}
         onPress={() => navigation.navigate('SignupScreen')}>

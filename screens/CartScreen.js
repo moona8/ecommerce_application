@@ -6,9 +6,25 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
+import {AppContext} from '../utils/globalState';
+import products from '../dummyData/products.json';
+import { useState } from 'react/cjs/react.development';
+import {firebaseDB} from '../config/firebaseConfig';
 
 const CartScreen = () => {
+  const {user} = useContext(AppContext);
+  const cartKeys = Object.keys(user.cart);
+  const[quantity,setQuantity]=useState(0)
+
+  const arr = products.data
+    .filter(i => !!cartKeys.find(b => i.productId === b))
+    .map(c => ({...c,quantiy :user.cart[c.productId]}));
+
+   console.log(arr,"arr");
+  //  const product =arr.map(i=>i.productId)
+  //  console.log(product,"product");
+
   return (
     <View style={styles.container}>
       {/* product list */}
@@ -22,17 +38,27 @@ const CartScreen = () => {
             />
           </View>
           <View style={styles.productDetail}>
-            <Text style={styles.productName}>productName</Text>
-            <Text style={styles.productDiscrption}>productDiscrption</Text>
+            <Text style={styles.productName}>name </Text>
+            <View style={styles.more}>
+            <Text style={styles.productDiscrption}>
+              productDecription
+            </Text>
+            <TouchableOpacity onPress={()=>{}}>
+              <Text
+                style={{textAlign: 'center', fontWeight: '500', color: 'blue'}}>
+                more...
+              </Text>
+            </TouchableOpacity>
+          </View>
             <View style={styles.productButton}>
-              <Text style={styles.productRate}>$35</Text>
+              <Text style={styles.productRate}>334</Text>
               <View style={styles.IncDec}>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={{textAlign: 'center'}}>+</Text>
+                  <Text onPress={()=>setQuantity(quantity+1 )} style={{textAlign: 'center'}}>+</Text>
                 </TouchableOpacity>
-                <Text style={styles.productNo}>3</Text>
+                <Text style={styles.productNo}>{quantity}</Text>
                 <TouchableOpacity style={styles.button}>
-                  <Text style={{textAlign: 'center'}}>-</Text>
+                  <Text onPress={()=>setQuantity(quantity-1 && quantity>=0)} style={{textAlign: 'center'}}>-</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -41,7 +67,9 @@ const CartScreen = () => {
       </ScrollView>
       {/* price Detail */}
       <View style={styles.priceDetail}>
-        <Text style={{ fontSize: 22,fontWeight: '500',color:'black',} }>Price Detail</Text>
+        <Text style={{fontSize: 22, fontWeight: '500', color: 'black'}}>
+          Price Detail
+        </Text>
         <View style={styles.pricing}>
           <Text style={styles.text}>price</Text>
           <Text style={styles.text}>$540</Text>
@@ -55,7 +83,10 @@ const CartScreen = () => {
           <Text style={styles.text}>$540</Text>
         </View>
         <TouchableOpacity style={styles.placeOrder}>
-          <Text style={{fontWeight: '500',color:'black',textAlign: 'center',}}>Place Order</Text>
+          <Text
+            style={{fontWeight: '500', color: 'black', textAlign: 'center'}}>
+            Place Order
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -70,19 +101,19 @@ const styles = StyleSheet.create({
   },
   product: {
     flexDirection: 'row',
-    height: 100,
+    height: 122,
     borderWidth: 2,
   },
   img: {
     height: '100%',
-    marginHorizontal: '2.5%',
+    marginHorizontal: 2,
     width: '20%',
     backgroundColor: 'red',
     borderWidth: 2,
   },
   productDetail: {
     borderWidth: 2,
-    width: '73%',
+    width: '79%',
   },
   productName: {
     borderWidth: 2,
@@ -125,7 +156,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: '95%',
     marginTop: 10,
-    height:40
+    height: 40,
   },
   pricing: {
     borderWidth: 2,
@@ -133,13 +164,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     //  fontWeight:' bold'
-    height:35,
-    
+    height: 35,
   },
-  text:{
+  text: {
     fontSize: 18,
     fontWeight: '500',
-    color:'black',
+    color: 'black',
   },
   placeOrder: {
     borderWidth: 2,
@@ -149,5 +179,11 @@ const styles = StyleSheet.create({
     height: 20,
     marginLeft: '35%',
     marginTop: 10,
+  },
+  more: {
+    borderWidth: 2,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    // marginTop:,
   },
 });

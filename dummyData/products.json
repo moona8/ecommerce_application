@@ -1,0 +1,29 @@
+{
+  "data": [
+      {
+       "productId": "001",
+       "productCategory": "men",
+       "productName": "Salt",
+       "productDecription": "Salt is  good for health",
+       "productPrice": "1000",
+       "productImage": "https://images.pexels.com/photos/736230/pexels-photo-736230.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+      },
+      {
+       "productId": "002",
+       "productCategory": "women",
+       "productName": "TShirt",
+       "productDecription": "This Tshirt is  good ",
+       "productPrice": "100",
+       "productImage": "https://cdn.britannica.com/88/194588-050-967E8D17/flowers.jpg"
+      },
+      {
+       "productId": "003",
+       "productCategory": "kids",
+       "productName": "Rose",
+       "productDecription": "Rose is beautiful",
+       "productPrice": "100",
+       "productImage": "https://cdn.pixabay.com/photo/2013/07/21/13/00/rose-165819__340.jpg"
+      }
+  
+    ]
+}

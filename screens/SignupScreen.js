@@ -18,6 +18,7 @@ const SignupScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [city, setcity] = useState('');
+  const [address, setAddress] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -27,6 +28,7 @@ const SignupScreen = ({navigation}) => {
       email === '' ||
       password === '' ||
       city === '' ||
+      address === '' ||
       confirmPassword === ''
     ) {
       setTimeout(() => {
@@ -55,6 +57,7 @@ const SignupScreen = ({navigation}) => {
             email,
             city,
             name,
+            address
           };
           return firebaseDB
             .ref('/')
@@ -92,13 +95,7 @@ const SignupScreen = ({navigation}) => {
         autoCorrect={false}
       />
 
-      <FormInput
-        labelValue={city}
-        onChangeText={userCity => setcity(userCity)}
-        placeholderText="Enter your City"
-        iconType="lock"
-        secureTextEntry={true}
-      />
+  
 
       <FormInput
         labelValue={email}
@@ -124,6 +121,22 @@ const SignupScreen = ({navigation}) => {
         placeholderText="Confirm Password"
         iconType="lock"
         secureTextEntry={true}
+      />
+
+<FormInput
+        labelValue={address}
+        onChangeText={userAddress => setAddress(userAddress)}
+        placeholderText="Current Adress"
+        iconType="lock"
+        autoCorrect={false}
+      />
+
+<FormInput
+        labelValue={city}
+        onChangeText={userCity => setcity(userCity)}
+        placeholderText="Enter your City"
+        iconType="lock"
+        autoCorrect={false}
       />
 
       <FormButton

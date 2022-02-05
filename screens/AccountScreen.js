@@ -1,19 +1,29 @@
-import { View, Text ,StyleSheet,} from 'react-native';
-import React,{useContext} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
+import React, {useContext} from 'react';
 import {AppContext} from '../utils/globalState';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 export default function AccountScreen() {
-  const { user} = useContext(AppContext);
+  const {user} = useContext(AppContext);
   return (
-
     <View>
+      <View style={styles.userAvata}>
+        
+        <View style={styles.avata}></View>
+        <Text style={styles.avataName}>{user?.name}</Text>
+      </View>
+      
+      
+      {/* userDetails */}
       <View style={styles.userDetails}>
-        <Text style={{ fontSize: 22,fontWeight: '500',color:'black',} }>User Detail</Text>
+        <Text style={{fontSize: 22, fontWeight: '500', color: 'black',marginBottom:10 }}>
+          User Details
+        </Text>
         <View style={styles.details}>
           <Text style={styles.text}>Name :</Text>
           <Text style={styles.text}>{user?.name}</Text>
         </View>
-        <View style={styles.details}> 
+        <View style={styles.details}>
           <Text style={styles.text}>Email :</Text>
           <Text style={styles.text}>{user?.email}</Text>
         </View>
@@ -21,18 +31,63 @@ export default function AccountScreen() {
           <Text style={styles.text}>City :</Text>
           <Text style={styles.text}>{user?.city}</Text>
         </View>
+        <View
+          style={{
+            borderWidth: 2,
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            //  fontWeight:' bold'
+            height: 80,
+            marginTop:10
+          }}>
+          <Text style={styles.text}>Address :</Text>
+          <Text style={styles.text}>{user?.address}</Text>
+        </View>
       </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
+  userAvata: {
+    borderWidth: 2,
+    height: 130,
+    display:'flex',
+    flexDirection: 'row',
+  },
+  avata: {
+    borderWidth: 2,
+    borderRadius:50,
+   marginBottom:10,
+   marginLeft:10,
+   marginRight:20,
+   marginTop:10,
+    width: 100,
+    height: 100,
+  },
+  avataName: {
+    // borderWidth: 2,
+    width: 10,
+    height: 10,
+    width: 200,
+    height: 100,
+    marginTop:10,
+    marginBottom:10,
+    fontSize: 25,
+    fontWeight: '500',
+    color: 'black',
+    paddingTop:30
+  },
+
+  //userDetails
   userDetails: {
     // borderWidth: 2,
-    width: '100%',
+    // width: '100%',
     marginLeft: 10,
     width: '95%',
     marginTop: 10,
-    height:40
+    height: 40,
+    marginBottom:20
   },
   details: {
     borderWidth: 2,
@@ -40,13 +95,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     //  fontWeight:' bold'
-    height:35,
+    height: 35,
+    marginTop:10
     
   },
-  text:{
+  text: {
     fontSize: 18,
     fontWeight: '500',
-    color:'black',
+    color: 'black',
   },
   placeOrder: {
     borderWidth: 2,
@@ -58,4 +114,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-

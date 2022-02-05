@@ -14,7 +14,17 @@ import React from 'react';
           </View>
           <View style={styles.productDetail}>
             <Text style={styles.productName}>productName</Text>
-            <Text style={styles.productDiscrption}>productDiscrption</Text>
+            <View style={styles.more}>
+            <Text style={styles.productDiscrption}>
+            productDecription
+            </Text>
+            <TouchableOpacity onPress={()=>{}}>
+              <Text
+                style={{textAlign: 'center', fontWeight: '500', color: 'blue'}}>
+                more...
+              </Text>
+            </TouchableOpacity>
+          </View>
             <View style={styles.productButton}>
               <Text style={styles.productRate}>$35</Text>
               
@@ -38,19 +48,19 @@ const styles = StyleSheet.create({
   },
   product: {
     flexDirection: 'row',
-    height: 100,
+    height: 122,
     borderWidth: 2,
   },
   img: {
     height: '100%',
-    marginHorizontal: '2.5%',
+    marginHorizontal: 2,
     width: '20%',
     backgroundColor: 'red',
     borderWidth: 2,
   },
   productDetail: {
     borderWidth: 2,
-    width: '73%',
+    width: '79%',
   },
   productName: {
     borderWidth: 2,
@@ -85,5 +95,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     height: 20,
     width: '30%',
+  },
+  more: {
+    borderWidth: 2,
+    display: 'flex',
+    justifyContent: 'flex-end',
+    // marginTop:,
   },
 });
