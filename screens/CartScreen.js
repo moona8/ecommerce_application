@@ -6,102 +6,221 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {AppContext} from '../utils/globalState';
 import products from '../dummyData/products.json';
-import { useState } from 'react/cjs/react.development';
 import {firebaseDB} from '../config/firebaseConfig';
+import {useNavigation} from '@react-navigation/native';
 
 const CartScreen = () => {
+  const navigation = useNavigation();
   const {user} = useContext(AppContext);
-  const cartKeys = Object.keys(user.cart);
-  const[quantity,setQuantity]=useState(0)
+  const [placeOrder, setPlaseOrder] = useState(true);
+  const cartKeys = user.cart ? Object.keys(user.cart) : [];
 
   const arr = products.data
-    .filter(i => !!cartKeys.find(b => i.productId === b))
-    .map(c => ({...c,quantiy :user.cart[c.productId]}));
+    .filter(
+      i =>
+        !!cartKeys.find(b => i.productId === b && user.cart[i.productId] > 0),
+    )
+    .map(c => ({...c, quantiy: user.cart[c.productId]}));
 
-   console.log(arr,"arr");
-  //  const product =arr.map(i=>i.productId)
-  //  console.log(product,"product");
+  const increseQty = productId => {
+    let updatedCart = {};
+    if (user?.cart) {
+      updatedCart = {...user.cart};
+    }
+    updatedCart[productId] = updatedCart[productId] + 1; // {001:1}
+    firebaseDB
+      .ref(`/users/${user.uid}`)
+      .update({cart: updatedCart})
+      .then(snap => {
+        // console.log(snap, 'snap');
+      })
+      .catch(err => {
+        // console.log('ERR: ', err);
+      });
+  };
+
+  const decreseQty = productId => {
+    let updatedCart = {};
+    if (user?.cart) {
+      updatedCart = {...user.cart};
+    }
+    updatedCart[productId] = updatedCart[productId] - 1; // {001:1}
+    firebaseDB
+      .ref(`/users/${user.uid}`)
+      .update({cart: updatedCart})
+      .then(snap => {
+        // console.log(snap, 'snap');
+      })
+      .catch(err => {
+        // console.log('ERR: ', err);
+      });
+  };
+  const amount = arr
+    .map(i => i.quantiy * i.productPrice)
+    .reduce((partialSum, a) => partialSum + a, 0);
+
+  const placeOrders = () => {
+    // () => {}
+
+    // arr.map(() => {})
+    const orderItems = arr.map(item => ({
+      productName: item.productName,
+      productId: item.productId,
+      productPrice: item.productPrice,
+      quantiy: item.quantiy,
+    }));
+
+    const newOrder = {
+      orderItems: JSON.stringify(orderItems),
+      createdAt: new Date().getTime(),
+      totalPrice: amount,
+      userId: user.uid,
+    };
+
+    firebaseDB
+      .ref('/orders/')
+      .push(newOrder)
+      .then(snap => {
+        let orders = [];
+        if (user?.orders) {
+          const _orders = JSON.parse(user.orders);
+          orders = [..._orders];
+        }
+        orders.push(snap.key);
+
+        return firebaseDB
+          .ref(`/users/${user.uid}`)
+          .update({orders: JSON.stringify(orders)});
+      })
+      .then(snap => {
+   return firebaseDB
+      .ref(`/users/${user.uid}`)
+      .update({cart: null})
+      })
+      .then((snap)=>{navigation.navigate("OrderDetailScreen")})
+      .catch(err => {
+        console.log(err.message);
+      });
+  };
+  // useEffect(() => {
+  //   let updatedCart = {};
+  //   if (user?.cart) {
+  //     updatedCart = {...user.cart};
+  //   }
+  //   updatedCart = '';
+  //   firebaseDB
+  //     .ref(`/users/${user.uid}`)
+  //     .update({cart: updatedCart})
+  //     .then(snap => {
+  //       // console.log(snap, 'snap');
+  //     })
+  //     .catch(err => {
+  //       // console.log('ERR: ', err);
+  //     });
+  // }, [placeOrder]);
 
   return (
     <View style={styles.container}>
       {/* product list */}
+      {!user.cart ? (
+        <View>
+          <Text>Noitems</Text>
+        </View>
+      ) : (
+        <>
+          <ScrollView style={styles.list}>
+            {arr.map(i => (
+              <View style={styles.productList}>
+                <View style={styles.product}>
+                  <View style={styles.img}>
+                    <Image
+                      source={require('../assets/kid.jpg')}
+                      style={{width: '100%', height: '100%'}}
+                    />
+                  </View>
+                  <View style={styles.productDetail}>
+                    <Text style={styles.productName}>{i.productName} </Text>
+                    <View style={styles.more}>
+                      <Text style={styles.productDiscrption}>
+                        {i.productDecription}
+                      </Text>
+                    </View>
+                    <View style={styles.productButton}>
+                      <Text style={styles.productRate}>{i.productPrice}</Text>
+                      <View style={styles.IncDec}>
+                        <TouchableOpacity style={styles.button}>
+                          <Text
+                            onPress={() => increseQty(i.productId)}
+                            style={{textAlign: 'center'}}>
+                            +
+                          </Text>
+                        </TouchableOpacity>
+                        <Text style={styles.productNo}>{i.quantiy}</Text>
+                        <TouchableOpacity style={styles.button}>
+                          <Text
+                            onPress={() => decreseQty(i.productId)}
+                            style={{textAlign: 'center'}}>
+                            -
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
 
-      <ScrollView style={styles.productList}>
-        <View style={styles.product}>
-          <View style={styles.img}>
-            <Image
-              source={require('../assets/kid.jpg')}
-              style={{width: '100%', height: '100%'}}
-            />
-          </View>
-          <View style={styles.productDetail}>
-            <Text style={styles.productName}>name </Text>
-            <View style={styles.more}>
-            <Text style={styles.productDiscrption}>
-              productDecription
+          {/* price Detail */}
+          <View style={styles.priceDetail}>
+            <Text style={{fontSize: 22, fontWeight: '500', color: 'black'}}>
+              Price Detail
             </Text>
-            <TouchableOpacity onPress={()=>{}}>
+            {/*  */}
+            <View style={styles.pricing}>
+              <Text style={styles.text}>Delivery</Text>
+              <Text style={styles.text}>Free</Text>
+            </View>
+            <View style={styles.pricing}>
+              <Text style={styles.text}>Cash on Delivery</Text>
+              <Text style={styles.text}>...</Text>
+            </View>
+            <View style={styles.pricing}>
+              <Text style={styles.text}>Payable Ampount</Text>
+              <Text style={styles.text}>{amount}</Text>
+            </View>
+            <TouchableOpacity style={styles.placeOrder} onPress={placeOrders}>
               <Text
-                style={{textAlign: 'center', fontWeight: '500', color: 'blue'}}>
-                more...
+                style={{
+                  fontWeight: '500',
+                  color: 'black',
+                  textAlign: 'center',
+                }}>
+                Place Order
               </Text>
             </TouchableOpacity>
           </View>
-            <View style={styles.productButton}>
-              <Text style={styles.productRate}>334</Text>
-              <View style={styles.IncDec}>
-                <TouchableOpacity style={styles.button}>
-                  <Text onPress={()=>setQuantity(quantity+1 )} style={{textAlign: 'center'}}>+</Text>
-                </TouchableOpacity>
-                <Text style={styles.productNo}>{quantity}</Text>
-                <TouchableOpacity style={styles.button}>
-                  <Text onPress={()=>setQuantity(quantity-1 && quantity>=0)} style={{textAlign: 'center'}}>-</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-      {/* price Detail */}
-      <View style={styles.priceDetail}>
-        <Text style={{fontSize: 22, fontWeight: '500', color: 'black'}}>
-          Price Detail
-        </Text>
-        <View style={styles.pricing}>
-          <Text style={styles.text}>price</Text>
-          <Text style={styles.text}>$540</Text>
-        </View>
-        <View style={styles.pricing}>
-          <Text style={styles.text}>Delivery</Text>
-          <Text style={styles.text}>Free</Text>
-        </View>
-        <View style={styles.pricing}>
-          <Text style={styles.text}>Payable Ampount</Text>
-          <Text style={styles.text}>$540</Text>
-        </View>
-        <TouchableOpacity style={styles.placeOrder}>
-          <Text
-            style={{fontWeight: '500', color: 'black', textAlign: 'center'}}>
-            Place Order
-          </Text>
-        </TouchableOpacity>
-      </View>
+        </>
+      )}
     </View>
   );
 };
 export default CartScreen;
 
 const styles = StyleSheet.create({
+  list: {
+    height: '60%',
+  },
   productList: {
     flexDirection: 'column',
     borderWidth: 2,
   },
   product: {
     flexDirection: 'row',
-    height: 122,
+    height: 105,
     borderWidth: 2,
   },
   img: {
@@ -127,7 +246,7 @@ const styles = StyleSheet.create({
 
   productButton: {
     flexDirection: 'row',
-    height: 100,
+    height: 20,
     borderWidth: 2,
   },
   productRate: {
@@ -136,7 +255,7 @@ const styles = StyleSheet.create({
   },
   IncDec: {
     flexDirection: 'row',
-    height: 100,
+    height: 20,
     borderWidth: 2,
     backgroundColor: 'yellow',
     justifyContent: 'space-between',

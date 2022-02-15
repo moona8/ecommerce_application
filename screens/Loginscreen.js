@@ -59,13 +59,18 @@ const LoginScreen = ({navigation}) => {
   };
 
   useEffect(() => {
+    //loading
     firebaseAuth.onAuthStateChanged(user => {
       if (user.uid) {
+
         firebaseDB.ref(`/users/${user.uid}`).on("value", snap => {
           setUser(snap.val());
+          //.then tab nav
           navigation.navigate('TabNav');
         });
+        //else bording
       }
+
     });
   }, []);
 

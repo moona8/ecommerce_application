@@ -1,105 +1,229 @@
-import { View, Text , TouchableOpacity,StyleSheet ,ScrollView,Image } from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Modal,
+  Pressable,
+} from 'react-native';
+import React, {useEffect, useContext, useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {firebaseDB} from '../config/firebaseConfig';
+import {AppContext} from '../utils/globalState';
 
- const OrderDetailScreen=()=> {
+const OrderDetailScreen = () => {
+  const {user, orders, setOrders} = useContext(AppContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCartItem, updateSelectedCartItem] = useState(null);
+
+  const _getUserOrder = () => {
+    if (user?.orders) {
+      const userOrders = JSON.parse(user.orders);
+
+      firebaseDB
+        .ref(`/orders`)
+        .get()
+        .then(snap => {
+          // snap.val() => { id: {...}, id2: {...}, id3: {...}, .. }
+          // user.orders => "[id, id2]"
+          // result => [{}, {}, ...]
+          let result = [];
+          userOrders.forEach(orderId => {
+            const newOrder = {...snap.val()[orderId]};
+            newOrder.orderId = orderId;
+            result.push(newOrder);
+          });
+          setOrders(result);
+        })
+        .catch(error => {
+          console.log(error.message);
+        });
+    }
+  };
+
+  useEffect(() => {
+    _getUserOrder();
+  }, []);
+
+  const navigation = useNavigation();
+
+  console.log('ORDERS: ');
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.productList}>
-        <View style={styles.product}>
-          <View style={styles.img}>
-            <Image
-              source={require('../assets/kid.jpg')}
-              style={{width: '100%', height: '100%'}}
-            />
-          </View>
-          <View style={styles.productDetail}>
-            <Text style={styles.productName}>productName</Text>
-            <View style={styles.more}>
-            <Text style={styles.productDiscrption}>
-            productDecription
-            </Text>
-            <TouchableOpacity onPress={()=>{}}>
-              <Text
-                style={{textAlign: 'center', fontWeight: '500', color: 'blue'}}>
-                more...
-              </Text>
-            </TouchableOpacity>
-          </View>
-            <View style={styles.productButton}>
-              <Text style={styles.productRate}>$35</Text>
-              
-                <TouchableOpacity style={styles.button}>
-                  <Text style={{textAlign: 'center',fontWeight:'500'}}>Canceled</Text>
-                </TouchableOpacity>
-            
+    <ScrollView>
+      {orders.map(order => {
+        const newDate = new Date(order.createdAt).toDateString();
+        const orderItems = JSON.parse(order.orderItems);
+
+        return (
+          <View style={styles.orderDetail}>
+            <View style={styles.order}>
+              <Text style={styles.text}>Order id {order.orderId}</Text>
+              <Text style={styles.text}></Text>
+            </View>
+            <View style={styles.order}>
+              <Text style={styles.text}>Total Price:{order.totalPrice}</Text>
+              <Text style={styles.text}>{newDate}</Text>
+            </View>
+            <View style={styles.order}>
+              <Text style={styles.text}>Items: {orderItems.length}</Text>
+              <TouchableOpacity
+                style={[styles.button, styles.buttonClose]}
+                onPress={() =>
+                  updateSelectedCartItem({...order, orderItems: orderItems})
+                }>
+                <Text style={{textAlign: 'center', fontWeight: '500'}}>
+                  Details
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
+        );
+      })}
+
+      {selectedCartItem && (
+        <ModalView
+          item={selectedCartItem}
+          updateSelectedCartItem={updateSelectedCartItem}
+        />
+      )}
+    </ScrollView>
+  );
+};
+export default OrderDetailScreen;
+
+const ModalView = ({item, updateSelectedCartItem}) => {
+  console.log('item', item);
+  return (
+    <View style={styles.centeredView}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={true}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            {/* <Text style={styles.modalText}>Hello World!</Text> */}
+              <Text style={styles.text}>{item.orderId}</Text>
+              <Text style={styles.text}>{new Date(item.createdAt).toDateString()}</Text>
+            <ScrollView>
+              {item.orderItems.map(i => (
+                <View style={styles.modalDetail}>
+            <View style={styles.order}>
+                  </View>
+                  <View style={styles.order}>
+                    <Text style={styles.text}>Product name</Text>
+                    <Text style={styles.text}>{i.productName}</Text>
+                  </View>
+                  <View style={styles.order}>
+                    <Text style={styles.text}></Text>
+                    <Text style={styles.text}></Text>
+                  </View>
+                  <View style={styles.order}>
+                    <Text style={styles.text}></Text>
+                    <Text style={styles.text}></Text>
+
+                    
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => updateSelectedCartItem(null)}>
+              <Text style={styles.textStyle}>Hide </Text>
+            </Pressable>
+          </View>
         </View>
-      </ScrollView>
+      </Modal>
     </View>
   );
-}
-export default OrderDetailScreen
+};
 
 const styles = StyleSheet.create({
-  productList: {
-    flexDirection: 'column',
-    borderWidth: 2,
-  },
-  product: {
-    flexDirection: 'row',
-    height: 122,
-    borderWidth: 2,
-  },
-  img: {
-    height: '100%',
-    marginHorizontal: 2,
-    width: '20%',
-    backgroundColor: 'red',
-    borderWidth: 2,
-  },
-  productDetail: {
-    borderWidth: 2,
-    width: '79%',
-  },
-  productName: {
+  orderDetail: {
     borderWidth: 2,
     width: '100%',
+    marginLeft: 10,
+    width: '95%',
+    marginTop: 10,
   },
-  productDiscrption: {
-    borderWidth: 2,
-    width: '100%',
-    height: 50,
-  },
-
-  productButton: {
+  order: {
+    // borderWidth: 2,
+    width: '200%',
     flexDirection: 'row',
-    height: 100,
-    borderWidth: 2,
+    justifyContent: 'space-between',
+    //  fontWeight:' bold'
+    // height: 25,
   },
-  productRate: {
-    marginRight: '50%',
-    borderWidth: 2,
+  text: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'black',
   },
-  // IncDec: {
-  //   flexDirection: 'row',
-  //   height: 100,
-  //   borderWidth: 2,
-  //   backgroundColor: 'yellow',
-  //   justifyContent: 'space-between',
-  //   width: '35%',
-  // },
 
   button: {
-    borderWidth: 2,
-    backgroundColor: 'red',
-    height: 20,
-    width: '30%',
+    // borderWidth: 2,
+    // backgroundColor: '#3AAEE9',
+    // height: 20,
+    // width: '30%',
   },
-  more: {
+  //modal
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // marginTop: 22,
+    // borderWidth: 2,
+    height: 20,
+    width: '100%',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 10,
+    paddingRight: 7,
+    paddingLeft: 7,
+    // marginBottom:10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#bc5a7e',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    // marginBottom: 15,
+    // textAlign: "center"
+  },
+  modalDetail: {
     borderWidth: 2,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    // marginTop:,
+    width: '60%',
+    marginLeft: 10,
+    // width: '95%',
+    marginTop: 10,
+    marginBottom: 20,
   },
 });

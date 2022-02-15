@@ -10,8 +10,9 @@ import React, {useState, useContext} from 'react';
 import products from '../dummyData/products.json';
 import {AppContext} from '../utils/globalState';
 import {firebaseDB} from '../config/firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
   // categories => all, men, women and kids
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -22,7 +23,7 @@ export default function HomeScreen() {
     return <View></View>;
   }
 
-  console.log('selectedCategory', selectedCategory);
+  // console.log('selectedCategory', selectedCategory);
 
   // prodArr => filter(condition) => product.category === selectedCategory => filteredArr
   // arr(5) => map((item) => {...}) return newArr(5)
@@ -38,7 +39,7 @@ export default function HomeScreen() {
       product => selectedCategory === product.productCategory,
     );
   }
-  console.log(filteredProducts);
+  // console.log(filteredProducts);
   return (
     <View style={styles.containers}>
       {/*  catiories */}
@@ -105,7 +106,7 @@ export default function HomeScreen() {
       {/* product list */}
       <ScrollView>
         {filteredProducts.map(product => (
-          <Product key={product.productId} product={product} />
+          <Product key={product.productId} product={product}  />
         ))}
       </ScrollView>
     </View>
@@ -114,6 +115,7 @@ export default function HomeScreen() {
 
 const Product = ({product}) => {
   const {user} = useContext(AppContext);
+  const navigation = useNavigation();
 
   console.log(user);
   let cartKeys = [];
@@ -133,30 +135,30 @@ const Product = ({product}) => {
       .ref(`/users/${user.uid}`)
       .update({cart: updatedCart})
       .then(snap => {
-        console.log(snap, 'snap');
+        // console.log(snap, 'snap');
       })
       .catch(err => {
-        console.log('ERR: ', err);
+        // console.log('ERR: ', err);
       });
     setAddToCart(false);
-    // console.log(id);
+    console.log(id);
   };
   const handleRemoveToCart = () => {
     let updatedCart = {};
     if (user?.cart) {
       updatedCart = {...user.cart};
     }
-    console.log(updatedCart, 'Before');
+    // console.log(updatedCart, 'Before');
     delete updatedCart[product.productId]; // {}
-    console.log(updatedCart, 'After');
+    // console.log(updatedCart, 'After');
     firebaseDB
       .ref(`/users/${user.uid}`)
       .update({cart: updatedCart})
       .then(snap => {
-        console.log(snap, 'snap');
+        // console.log(snap, 'snap');
       })
       .catch(err => {
-        console.log('ERR: ', err);
+        // console.log('ERR: ', err);
       });
     setAddToCart(true);
   };
@@ -178,12 +180,7 @@ const Product = ({product}) => {
             <Text style={styles.productDiscrption}>
               {product.productDecription}on
             </Text>
-            <TouchableOpacity onPress={handleAddToCart}>
-              <Text
-                style={{textAlign: 'center', fontWeight: '500', color: 'blue'}}>
-                more...
-              </Text>
-            </TouchableOpacity>
+            
           </View>
           <View style={styles.productButton}>
             <Text style={styles.productRate}>{product.productPrice}</Text>
@@ -236,7 +233,7 @@ const styles = StyleSheet.create({
   },
   product: {
     flexDirection: 'row',
-    height: 122,
+    height: 105,
     borderWidth: 2,
     marginTop: 5,
     
@@ -286,11 +283,6 @@ const styles = StyleSheet.create({
     height: 20,
     width: '30%',
   },
-  more: {
-    borderWidth: 2,
-    display: 'flex',
-    justifyContent: 'flex-end',
-    // marginTop:,
-  },
+
 });
 //rnf

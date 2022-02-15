@@ -9,6 +9,7 @@ import CartScreen from './screens/CartScreen';
 import OrderDetailScreen from './screens/OrderDetailScreen';
 import AccountScreen from './screens/AccountScreen';
 import ProductDetailScreen from './screens/ProductDetailScreen';
+
 import {AppContext} from './utils/globalState';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,11 +22,35 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {firebaseAuth, firebaseDB} from './config/firebaseConfig';
 
 const Stack = createNativeStackNavigator();
+const TabStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+function TabStackScreen  ()  {
+  return (
+    <TabStack.Navigator initialRouteName="HomeScreen">
+      <TabStack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          headerShown: false,presentation: "modal"
+        }}
+      />
+        <TabStack.Screen
+            name="ProductDetailScreen"
+            component={ProductDetailScreen}
+            options={{headerShown: false,
+            }}
+          />
+    </TabStack.Navigator>
+  );
+};
+
 function TabNavigator() {
+
+  
   return (
     <Tab.Navigator
+    initialRouteName="HomeScreen"
       screenOptions={{
         headerShown: true,
         // tabBarShowLabel: false,
@@ -34,12 +59,16 @@ function TabNavigator() {
         tabBarInactiveBackgroundColor: 'pink',
       }}>
       <Tab.Screen
-        name="HomeScreen"
-        component={HomeScreen}
+        name="TabStackScreen"
+        component={TabStackScreen}
         options={{
           headerShown: false,
-          tabBarIcon: (props) => (
-            <Ionicons name="home-outline" color={props.focused ? "blue" : "red"} size={25} />
+          tabBarIcon: props => (
+            <Ionicons
+              name="home-outline"
+              color={props.focused ? 'blue' : 'red'}
+              size={25}
+            />
           ),
         }}
       />
@@ -47,19 +76,25 @@ function TabNavigator() {
         name="CartScreen"
         component={CartScreen}
         options={{
-          tabBarIcon:(props) => (
-            <Ionicons name="md-cart-outline" color={props.focused ? "blue" : "red"} size={25} />
-            ),
-          }}
-        
+          tabBarIcon: props => (
+            <Ionicons
+              name="md-cart-outline"
+              color={props.focused ? 'blue' : 'red'}
+              size={25}
+            />
+          ),
+        }}
       />
       <Tab.Screen
         name="OrderDetailScreen"
         component={OrderDetailScreen}
         options={{
-          
-          tabBarIcon: (props) => (
-            <Ionicons name="time-outline" color={props.focused ? "blue" : "red"} size={25} />
+          tabBarIcon: props => (
+            <Ionicons
+              name="time-outline"
+              color={props.focused ? 'blue' : 'red'}
+              size={25}
+            />
           ),
         }}
       />
@@ -67,9 +102,12 @@ function TabNavigator() {
         name="Settings"
         component={AccountScreen}
         options={{
-          
-          tabBarIcon: (props) => (
-            <Ionicons name="person-outline" color={props.focused ? "blue" : "red"} size={25} />
+          tabBarIcon: props => (
+            <Ionicons
+              name="person-outline"
+              color={props.focused ? 'blue' : 'red'}
+              size={25}
+            />
           ),
         }}
       />
@@ -79,30 +117,17 @@ function TabNavigator() {
 
 const App = ({navigation}) => {
   const [user, setUser] = useState(null);
+  const [orders, setOrders] = useState([]);
 
   return (
-    <AppContext.Provider value={{user, setUser}}>
+    <AppContext.Provider value={{user, setUser, orders, setOrders}}>
       <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: false,
-            // tabBarShowLabel: false,
-            // tabBarStyle: {backgroundColor: 'grey'},
-            // tabBarInactiveTintColor: 'blue',
-            // tabBarInactiveBackgroundColor: 'pink',
-          }}>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
           <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          {/* <Stack.Screen name="LoginScreen" component={LoginScreen} /> */}
-          <Stack.Screen
-            name="Product Details"
-            component={ProductDetailScreen}
-          />
-          <Stack.Screen
-            // screenOptions={{headerShown: false}}
-            name="TabNav"
-            component={TabNavigator}
-          />
+          <Stack.Screen name="SignupScreen" component={SignupScreen} />
+          <Stack.Screen name="TabNav" component={TabNavigator} />
+        
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
