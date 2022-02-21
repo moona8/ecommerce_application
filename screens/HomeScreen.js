@@ -141,7 +141,6 @@ const Product = ({product}) => {
         // console.log('ERR: ', err);
       });
     setAddToCart(false);
-    console.log(id);
   };
   const handleRemoveToCart = () => {
     let updatedCart = {};

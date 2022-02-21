@@ -19,6 +19,7 @@ const OrderDetailScreen = () => {
   const [selectedCartItem, updateSelectedCartItem] = useState(null);
 
   const _getUserOrder = () => {
+    // console.log(user.orders);
     if (user?.orders) {
       const userOrders = JSON.parse(user.orders);
 
@@ -45,19 +46,20 @@ const OrderDetailScreen = () => {
 
   useEffect(() => {
     _getUserOrder();
-  }, []);
-
+  }, [user]);
+  
   const navigation = useNavigation();
-
-  console.log('ORDERS: ');
+  
+  console.log('ORDERS:',orders.length);
   return (
     <ScrollView>
-      {orders.map(order => {
+      {orders.map((order, i) => {
+
         const newDate = new Date(order.createdAt).toDateString();
         const orderItems = JSON.parse(order.orderItems);
 
         return (
-          <View style={styles.orderDetail}>
+          <View key={`order_${i}`} style={styles.orderDetail}>
             <View style={styles.order}>
               <Text style={styles.text}>Order id {order.orderId}</Text>
               <Text style={styles.text}></Text>
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
   },
   order: {
     // borderWidth: 2,
-    width: '200%',
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     //  fontWeight:' bold'

@@ -32,11 +32,13 @@ const LoginScreen = ({navigation}) => {
   };
 
   const login = () => {
+    
     try {
       validateFeilds();
       firebaseAuth
         .signInWithEmailAndPassword(email, password)
         .then(res => {
+        
           // /users/uid
           // return firebaseDB.ref(`/users/${res.user.uid}`).get();
         })
@@ -57,22 +59,6 @@ const LoginScreen = ({navigation}) => {
       setErrorMessage(error.message);
     }
   };
-
-  useEffect(() => {
-    //loading
-    firebaseAuth.onAuthStateChanged(user => {
-      if (user.uid) {
-
-        firebaseDB.ref(`/users/${user.uid}`).on("value", snap => {
-          setUser(snap.val());
-          //.then tab nav
-          navigation.navigate('TabNav');
-        });
-        //else bording
-      }
-
-    });
-  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
