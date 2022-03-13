@@ -12,6 +12,8 @@ import FormButton from '../components/FormButton';
 import Alert from '../components/Alert';
 import {getFormaterdErrorMessage} from "../utils/helpers"
 import {firebaseAuth, firebaseDB} from '../config/firebaseConfig';
+import { AppContext } from '../utils/globalState';
+import { storeData } from '../utils/helpers';
 
 const SignupScreen = ({navigation}) => {
   const [name, setname] = useState('');
@@ -21,6 +23,7 @@ const SignupScreen = ({navigation}) => {
   const [address, setAddress] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const {setUser}=useContext(AppContext)
 
   const validateFeilds = () => {
     if (
@@ -48,22 +51,28 @@ const SignupScreen = ({navigation}) => {
     try {
       validateFeilds();
 
+      let userDetails =  {
+        email,
+        city,
+        name,
+        address,
+      }
+
       firebaseAuth
         .createUserWithEmailAndPassword(email, password)
         .then(response => {
           const user = response.user;
-          const userDetails = {
-            uid: user.uid,
-            email,
-            city,
-            name,
-            address
-          };
+          userDetails['uid'] = user.uid
           return firebaseDB
             .ref('/')
             .child('users')
             .child(user.uid)
             .set(userDetails);
+        })
+        .then(_ => {
+          console.log(userDetails);
+          setUser(userDetails);
+          return storeData({uid:userDetails.uid});
         })
         .then(snap => {
           console.log('SNAP', snap);

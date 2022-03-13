@@ -19,7 +19,7 @@ const OrderDetailScreen = () => {
   const [selectedCartItem, updateSelectedCartItem] = useState(null);
 
   const _getUserOrder = () => {
-    // console.log(user.orders);
+    console.log(user.orders);
     if (user?.orders) {
       const userOrders = JSON.parse(user.orders);
 
@@ -47,14 +47,13 @@ const OrderDetailScreen = () => {
   useEffect(() => {
     _getUserOrder();
   }, [user]);
-  
+
   const navigation = useNavigation();
-  
-  console.log('ORDERS:',orders.length);
+
+  console.log('ORDERS:', orders.length);
   return (
     <ScrollView>
       {orders.map((order, i) => {
-
         const newDate = new Date(order.createdAt).toDateString();
         const orderItems = JSON.parse(order.orderItems);
 
@@ -109,30 +108,35 @@ const ModalView = ({item, updateSelectedCartItem}) => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             {/* <Text style={styles.modalText}>Hello World!</Text> */}
-              <Text style={styles.text}>{item.orderId}</Text>
-              <Text style={styles.text}>{new Date(item.createdAt).toDateString()}</Text>
+            <Text style={styles.text}>{item.orderId}</Text>
+            <Text style={styles.text}>
+              {new Date(item.createdAt).toDateString()}
+            </Text>
+            {/* <View style={styles.orders}>
+                    <Text style={styles.text}>Total Price</Text>
+                    <Text style={styles.text}>{item.totalPrice}</Text>
+                  </View> */}
             <ScrollView>
               {item.orderItems.map(i => (
                 <View style={styles.modalDetail}>
-            <View style={styles.order}>
-                  </View>
+                  
                   <View style={styles.order}>
                     <Text style={styles.text}>Product name</Text>
                     <Text style={styles.text}>{i.productName}</Text>
                   </View>
                   <View style={styles.order}>
-                    <Text style={styles.text}></Text>
-                    <Text style={styles.text}></Text>
+                    <Text style={styles.text}>Product Price</Text>
+                    <Text style={styles.text}>{i.productPrice}</Text>
                   </View>
                   <View style={styles.order}>
-                    <Text style={styles.text}></Text>
-                    <Text style={styles.text}></Text>
-
-                    
+                    <Text style={styles.text}>Product Quantiy</Text>
+                    <Text style={styles.text}>{i.quantiy}</Text>
                   </View>
                 </View>
               ))}
             </ScrollView>
+            {/* <View style={styles.order}>{item.totalPrice}</View>  */}
+            {/* <Text style={styles.text}>{item.totalPrice}</Text> */}
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={() => updateSelectedCartItem(null)}>
@@ -222,10 +226,13 @@ const styles = StyleSheet.create({
   },
   modalDetail: {
     borderWidth: 2,
-    width: '60%',
+    width: '80%',
     marginLeft: 10,
     // width: '95%',
     marginTop: 10,
     marginBottom: 20,
+  },
+  orders: {
+    width: "100%",
   },
 });

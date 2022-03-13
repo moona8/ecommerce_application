@@ -1,22 +1,41 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React, {useContext} from 'react';
 import {AppContext} from '../utils/globalState';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {firebaseAuth} from '../config/firebaseConfig';
+import {storeData} from '../utils/helpers';
 
-export default function AccountScreen() {
-  const {user} = useContext(AppContext);
+export default function AccountScreen({navigation}) {
+  const {user, setUser} = useContext(AppContext);
+  const logout = () => {
+    firebaseAuth
+      .signOut()
+      .then(() => {
+        setUser('');
+       return storeData(null);
+      })
+      .then(() => {navigation.navigate('SignupScreen')})
+
+      .catch(error => {
+        // An error happened.
+      });
+  };
   return (
     <View>
       <View style={styles.userAvata}>
-        
         <View style={styles.avata}></View>
         <Text style={styles.avataName}>{user?.name}</Text>
       </View>
-      
-      
+
       {/* userDetails */}
       <View style={styles.userDetails}>
-        <Text style={{fontSize: 22, fontWeight: '500', color: 'black',marginBottom:10 }}>
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: '500',
+            color: 'black',
+            marginBottom: 10,
+          }}>
           User Details
         </Text>
         <View style={styles.details}>
@@ -39,10 +58,15 @@ export default function AccountScreen() {
             justifyContent: 'space-between',
             //  fontWeight:' bold'
             height: 80,
-            marginTop:10
+            marginTop: 10,
           }}>
           <Text style={styles.text}>Address :</Text>
           <Text style={styles.text}>{user?.address}</Text>
+        </View>
+        <View>
+          <TouchableOpacity onPress={logout}>
+            <Text>Logout</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -52,16 +76,16 @@ const styles = StyleSheet.create({
   userAvata: {
     borderWidth: 2,
     height: 130,
-    display:'flex',
+    display: 'flex',
     flexDirection: 'row',
   },
   avata: {
     borderWidth: 2,
-    borderRadius:50,
-   marginBottom:10,
-   marginLeft:10,
-   marginRight:20,
-   marginTop:10,
+    borderRadius: 50,
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 20,
+    marginTop: 10,
     width: 100,
     height: 100,
   },
@@ -71,12 +95,12 @@ const styles = StyleSheet.create({
     height: 10,
     width: 200,
     height: 100,
-    marginTop:10,
-    marginBottom:10,
+    marginTop: 10,
+    marginBottom: 10,
     fontSize: 25,
     fontWeight: '500',
     color: 'black',
-    paddingTop:30
+    paddingTop: 30,
   },
 
   //userDetails
@@ -87,7 +111,7 @@ const styles = StyleSheet.create({
     width: '95%',
     marginTop: 10,
     height: 40,
-    marginBottom:20
+    marginBottom: 20,
   },
   details: {
     borderWidth: 2,
@@ -96,8 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     //  fontWeight:' bold'
     height: 35,
-    marginTop:10
-    
+    marginTop: 10,
   },
   text: {
     fontSize: 18,

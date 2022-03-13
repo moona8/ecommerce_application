@@ -3,12 +3,12 @@ import 'firebase/compat/auth';
 import 'firebase/compat/database';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBV2yxIwkyWOEtbtHzALM8OA22FPFiB5rI',
-  authDomain: 'ecommerce-app-55cfc.firebaseapp.com',
-  projectId: 'ecommerce-app-55cfc',
-  storageBucket: 'ecommerce-app-55cfc.appspot.com',
-  appId: '1:136134755375:android:99b185cb1c63bc22e0f2da',
-  databaseUrl: 'https://ecommerce-app-55cfc-default-rtdb.firebaseio.com/',
+  apiKey: 'AIzaSyD36MfOLpvr00aVZft0tK1IGhCM2v6RE0s',
+  authDomain: 'ecommerce-926a1.firebaseapp.com',
+  projectId: 'ecommerce-926a1',
+  storageBucket: 'ecommerce-926a1.appspot.com',
+  appId: '1:785436563123:android:555b30dd0bfaf8a68ac2c6',
+  databaseUrl: 'https://ecommerce-926a1-default-rtdb.firebaseio.com/',
 };
 
 firebase.initializeApp(firebaseConfig);

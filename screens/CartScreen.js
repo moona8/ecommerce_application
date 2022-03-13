@@ -16,14 +16,15 @@ const CartScreen = () => {
   const navigation = useNavigation();
   const {user} = useContext(AppContext);
   const [placeOrder, setPlaseOrder] = useState(true);
-  const cartKeys = user.cart ? Object.keys(user.cart) : [];
+  // const user. = user?.cart ? Object.keys(user.cart) : [];
 
+  console.log(user);
   const arr = products.data
     .filter(
       i =>
-        !!cartKeys.find(b => i.productId === b && user.cart[i.productId] > 0),
+        !!user.cartKeys.find(b => i.productId === b && user?.cart[i.productId] > 0),
     )
-    .map(c => ({...c, quantiy: user.cart[c.productId]}));
+    .map(c => ({...c, quantiy: user?.cart[c.productId]}));
 
   const increseQty = productId => {
     let updatedCart = {};

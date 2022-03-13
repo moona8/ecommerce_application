@@ -8,7 +8,7 @@ const App = () => {
   const [orders, setOrders] = useState([]);
 
   return (
-    <AppContext.Provider value={{user, setUser, orders, setOrders}}>
+    <AppContext.Provider value={{user, setUser, orders, setOrders}}   >
       <NavigationContainer>
         <Navigation />
       </NavigationContainer>

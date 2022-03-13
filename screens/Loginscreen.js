@@ -1,4 +1,3 @@
-
 import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
@@ -14,7 +13,7 @@ import FormButton from '../components/FormButton';
 import {firebaseAuth, firebaseDB} from '../config/firebaseConfig';
 import {AppContext} from '../utils/globalState';
 import Alert from '../components/Alert';
-import {getFormaterdErrorMessage} from "../utils/helpers"
+import {getFormaterdErrorMessage, storeData} from '../utils/helpers';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
@@ -28,32 +27,33 @@ const LoginScreen = ({navigation}) => {
         setErrorMessage('');
       }, 3000);
       throw new Error('All feilds are required');
-    } 
+    }
   };
 
   const login = () => {
-    
     try {
       validateFeilds();
       firebaseAuth
         .signInWithEmailAndPassword(email, password)
         .then(res => {
-        
+          console.log('RES', res);
           // /users/uid
-          // return firebaseDB.ref(`/users/${res.user.uid}`).get();
+          return firebaseDB.ref(`/users/${res.user.uid}`).get();
         })
-        // .then(snap => {
-        //   console.log(snap.val());
-        //   // setUser(snap.val());
-        //   // navigation.navigate('TabNav');
-        // })
+        .then(snap => {
+          console.log(snap.val());
+          setUser(snap.val());
+          return storeData({uid: res.user.uid});
+        })
+        .then(() => {
+          navigation.navigate('TabNav');
+        })
         .catch(error => {
           setErrorMessage(getFormaterdErrorMessage(error.message));
-          console.log(error)
+          console.log(error);
           setTimeout(() => {
             setErrorMessage('');
           }, 3000);
-
         });
     } catch (error) {
       setErrorMessage(error.message);

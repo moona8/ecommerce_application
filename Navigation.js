@@ -10,6 +10,7 @@ import CartScreen from './screens/CartScreen';
 import OrderDetailScreen from './screens/OrderDetailScreen';
 import AccountScreen from './screens/AccountScreen';
 import ProductDetailScreen from './screens/ProductDetailScreen';
+import {getData, getFormattedUser, storeData} from './utils/helpers';
 
 import {AppContext} from './utils/globalState';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -48,6 +49,7 @@ function TabStackScreen() {
 }
 
 function TabNavigator() {
+  const {user} = useContext(AppContext);
   return (
     <Tab.Navigator
       initialRouteName="HomeScreen"
@@ -76,6 +78,7 @@ function TabNavigator() {
         name="CartScreen"
         component={CartScreen}
         options={{
+          tabBarBadge: user.cartKeys.length ,
           tabBarIcon: props => (
             <Ionicons
               name="md-cart-outline"
@@ -115,39 +118,63 @@ function TabNavigator() {
   );
 }
 
+const LoadingPage = () => {
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Loadig...</Text>
+    </View>
+  );
+};
+
 const Navigation = () => {
   const {setUser} = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    //loading
-    firebaseAuth.onAuthStateChanged(user => {
-      if (user?.uid) {
-        firebaseDB.ref(`/users/${user.uid}`).on('value', snap => {
-          setUser(snap.val());
+  
+  const _getUserData = () => {
+    getData()
+      .then(user => {
+        if (user) {
+          const data = JSON.parse(user)
+              firebaseDB.ref(`/users/${data.uid}`).on('value', snap => {
+          setUser(getFormattedUser(snap.val()));
           setLoading(false);
           navigation.navigate('TabNav');
         });
-      }
-      setLoading(false);
-    });
-  }, []);
+          // setUser(JSON.parse(user));
+          // navigation.navigate('TabNav');
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        setLoading(false);
+      });
+  };
 
-  if (loading) {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Loadig...</Text>
-      </View>
-    );
-  }
+  useEffect(() => {
+    //loading
+    _getUserData();
+
+    // firebaseAuth.onAuthStateChanged(user => {
+    //   console.log("USER", user);
+    //   if (user?.uid) {
+    //     firebaseDB.ref(`/users/${user.uid}`).on('value', snap => {
+    //       setUser(snap.val());
+    //       setLoading(false);
+    //       navigation.navigate('TabNav');
+    //     });
+    //   }
+    //   setLoading(false);
+    // });
+  }, []);
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="OnBoardingScreen" component={OnBoardingScreen} />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="SignupScreen" component={SignupScreen} />
-      <Stack.Screen name="TabNav" component={TabNavigator} />
+      <Stack.Screen name="OnBoardingScreen" component={loading ? LoadingPage : OnBoardingScreen} />
+      <Stack.Screen name="LoginScreen" component={loading ? LoadingPage : LoginScreen} />
+      <Stack.Screen name="SignupScreen" component={loading ? LoadingPage : SignupScreen} />
+      <Stack.Screen name="TabNav" component={loading ? LoadingPage : TabNavigator} />
     </Stack.Navigator>
   );
 };

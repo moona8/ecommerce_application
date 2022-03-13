@@ -190,13 +190,13 @@ const Product = ({product}) => {
                 </Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleRemoveToCart}>
+              // <TouchableOpacity
+              //   style={styles.button}
+              //   onPress={handleRemoveToCart}>
                 <Text style={{textAlign: 'center', fontWeight: '500'}}>
-                  Remove
+                  Added
                 </Text>
-              </TouchableOpacity>
+              // </TouchableOpacity>
             )}
           </View>
         </View>
