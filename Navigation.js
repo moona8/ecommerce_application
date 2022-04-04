@@ -78,7 +78,7 @@ function TabNavigator() {
         name="CartScreen"
         component={CartScreen}
         options={{
-          tabBarBadge: user.cartKeys.length ,
+          tabBarBadge: user.cartKeys ?user.cartKeys.length:0 ,
           tabBarIcon: props => (
             <Ionicons
               name="md-cart-outline"
@@ -127,7 +127,7 @@ const LoadingPage = () => {
 };
 
 const Navigation = () => {
-  const {setUser} = useContext(AppContext);
+  const {setUser,setProducts} = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
@@ -151,9 +151,18 @@ const Navigation = () => {
         setLoading(false);
       });
   };
-
+  const getProducts=()=>{
+    firebaseDB.ref("/products").get()
+    .then((snap)=>{
+      console.log(snap.val(), "before");
+      const products=Object.values(snap.val())
+      console.log(products, "after");
+      setProducts(products)})
+    .catch((e)=>console.log(e))
+  }
   useEffect(() => {
     //loading
+    getProducts()
     _getUserData();
 
     // firebaseAuth.onAuthStateChanged(user => {

@@ -8,18 +8,18 @@ import {
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import {AppContext} from '../utils/globalState';
-import products from '../dummyData/products.json';
+// import products from '../dummyData/products.json';
 import {firebaseDB} from '../config/firebaseConfig';
 import {useNavigation} from '@react-navigation/native';
 
 const CartScreen = () => {
   const navigation = useNavigation();
-  const {user} = useContext(AppContext);
+  const {user,products} = useContext(AppContext);
   const [placeOrder, setPlaseOrder] = useState(true);
   // const user. = user?.cart ? Object.keys(user.cart) : [];
 
   console.log(user);
-  const arr = products.data
+  const arr = products
     .filter(
       i =>
         !!user.cartKeys.find(b => i.productId === b && user?.cart[i.productId] > 0),

@@ -94,7 +94,7 @@ const OrderDetailScreen = () => {
 };
 export default OrderDetailScreen;
 
-const ModalView = ({item, updateSelectedCartItem}) => {
+const ModalView = ( {item, updateSelectedCartItem}) => {
   console.log('item', item);
   return (
     <View style={styles.centeredView}>

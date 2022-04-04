@@ -7,19 +7,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useState, useContext} from 'react';
-import products from '../dummyData/products.json';
+// import products from '../dummyData/products.json';
 import {AppContext} from '../utils/globalState';
 import {firebaseDB} from '../config/firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 
+
+
 export default function HomeScreen({navigation}) {
-  // categories => all, men, women and kids
+  const {products} = useContext(AppContext);
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   // cart => [user and product]
   // cart => [{productId: "001", quantity: 1}, {...}]
 
-  if (!products.data.length) {
+  if (!products.length) {
     return <View></View>;
   }
 
@@ -30,12 +32,12 @@ export default function HomeScreen({navigation}) {
   // arr(5) => filter((item) => condition[true/false]) return newArr(<=arr length)
   // DRY
 
-  let filteredProducts = [...products.data];
+  let filteredProducts = [...products];
 
   if (selectedCategory === 'all') {
-    filteredProducts = [...products.data];
+    filteredProducts = [...products];
   } else {
-    filteredProducts = [...products.data].filter(
+    filteredProducts = [...products].filter(
       product => selectedCategory === product.productCategory,
     );
   }
@@ -183,7 +185,7 @@ const Product = ({product}) => {
           </View>
           <View style={styles.productButton}>
             <Text style={styles.productRate}>{product.productPrice}</Text>
-            {addToCart ? (
+            {!cartKeys.find(cartItem => cartItem === product.productId) ? (
               <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
                 <Text style={{textAlign: 'center', fontWeight: '500'}}>
                   Add to cart

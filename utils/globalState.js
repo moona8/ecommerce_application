@@ -5,4 +5,6 @@ export const AppContext = createContext({
   setUser: () => {},
   orders: [],
   setOrders: () => {},
+  products:[],
+  setProducts:()=>{}
 });
