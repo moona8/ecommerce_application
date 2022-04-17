@@ -42,8 +42,9 @@ const LoginScreen = ({navigation}) => {
         })
         .then(snap => {
           console.log(snap.val());
-          setUser(snap.val());
-          return storeData({uid: res.user.uid});
+          const userData = snap.val()
+          setUser(userData);
+          return storeData({uid: userData.uid});
         })
         .then(() => {
           navigation.navigate('TabNav');

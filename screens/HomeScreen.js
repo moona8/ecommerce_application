@@ -45,7 +45,9 @@ export default function HomeScreen({navigation}) {
   return (
     <View style={styles.containers}>
       {/*  catiories */}
-      <View style={{backgroundColor: '#d1c4e9', height: 50}}></View>
+      <View style={{backgroundColor: '#d1c4e9', height: 50}}>
+        <Text style={styles.header}>ECOMMERCE App</Text>
+      </View>
       <View style={styles.picContainer}>
         <TouchableOpacity
           style={styles.viewChild}
@@ -144,25 +146,25 @@ const Product = ({product}) => {
       });
     setAddToCart(false);
   };
-  const handleRemoveToCart = () => {
-    let updatedCart = {};
-    if (user?.cart) {
-      updatedCart = {...user.cart};
-    }
-    // console.log(updatedCart, 'Before');
-    delete updatedCart[product.productId]; // {}
-    // console.log(updatedCart, 'After');
-    firebaseDB
-      .ref(`/users/${user.uid}`)
-      .update({cart: updatedCart})
-      .then(snap => {
-        // console.log(snap, 'snap');
-      })
-      .catch(err => {
-        // console.log('ERR: ', err);
-      });
-    setAddToCart(true);
-  };
+  // const handleRemoveToCart = () => {
+  //   let updatedCart = {};
+  //   if (user?.cart) {
+  //     updatedCart = {...user.cart};
+  //   }
+  //   // console.log(updatedCart, 'Before');
+  //   delete updatedCart[product.productId]; // {}
+  //   // console.log(updatedCart, 'After');
+  //   firebaseDB
+  //     .ref(`/users/${user.uid}`)
+  //     .update({cart: updatedCart})
+  //     .then(snap => {
+  //       // console.log(snap, 'snap');
+  //     })
+  //     .catch(err => {
+  //       // console.log('ERR: ', err);
+  //     });
+  //   setAddToCart(true);
+  // };
 
   return (
     <View Style={styles.container}>
@@ -179,12 +181,12 @@ const Product = ({product}) => {
           <Text style={styles.productName}>{product.productName}</Text>
           <View style={styles.more}>
             <Text style={styles.productDiscrption}>
-              {product.productDecription}on
+              {product.productDecription}
             </Text>
             
           </View>
           <View style={styles.productButton}>
-            <Text style={styles.productRate}>{product.productPrice}</Text>
+            <Text style={styles.productRate}> RS___/{product.productPrice}</Text>
             {!cartKeys.find(cartItem => cartItem === product.productId) ? (
               <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
                 <Text style={{textAlign: 'center', fontWeight: '500'}}>
@@ -212,6 +214,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
   },
+  header: {
+   textAlign:"center",
+  //  fontWeight:20,
+   paddingTop:20,
+   color:"black",
+  },
   picContainer: {
     flexDirection: 'row',
     height: '25%',
@@ -223,20 +231,27 @@ const styles = StyleSheet.create({
     width: '20%',
     backgroundColor: 'red',
     borderRadius: 50,
-    borderWidth: 2,
+    // borderWidth: 2,
     borderColor: '#7986cb',
   },
+
+
   //product
+
   container: {
     flexDirection: 'column',
-    borderWidth: 2,
+    // borderWidth: 2,
 
   },
   product: {
     flexDirection: 'row',
-    height: 105,
-    borderWidth: 2,
+    height: 115,
+    paddingTop:5,    
     marginTop: 5,
+    
+      elevation: 5,
+      shadowColor: '#52006A',
+   
     
   },
   img: {
@@ -244,18 +259,24 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     width: '20%',
     backgroundColor: 'red',
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   productDetail: {
-    borderWidth: 2,
+    // borderWidth: 2,
     width: '79%',
+      marginLeft:10
   },
   productName: {
-    borderWidth: 2,
-    width: '100%',
+    // borderWidth: 2,
+    color:'black',
+    fontSize:20,   
+     width: "80%",
+     paddingLeft:10
   },
   productDiscrption: {
-    borderWidth: 2,
+    // borderWidth: 2,
+    color:'black',
+    fontSize:15,  
     width: '100%',
     height: 50,
   },
@@ -263,26 +284,32 @@ const styles = StyleSheet.create({
   productButton: {
     flexDirection: 'row',
     // height: 100,
-    borderWidth: 2,
+    paddingBottom:10,
+    
+    marginRight:10
   },
   productRate: {
     marginRight: '50%',
-    borderWidth: 2,
+    color:'black',
+    fontSize:15,  
+    // borderWidth: 2,
   },
   IncDec: {
     flexDirection: 'row',
     // height: 100,
-    borderWidth: 2,
+    // borderWidth: 2,
     backgroundColor: 'yellow',
     justifyContent: 'space-between',
     width: '35%',
   },
 
   button: {
-    borderWidth: 2,
+    borderWidth: 1,
+    borderColor:"red",
     backgroundColor: '#ffcdd2',
     height: 20,
     width: '30%',
+    marginRight:10
   },
 
 });

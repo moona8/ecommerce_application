@@ -28,25 +28,25 @@ const Stack = createNativeStackNavigator();
 const TabStack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function TabStackScreen() {
-  return (
-    <TabStack.Navigator initialRouteName="HomeScreen">
-      <TabStack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{
-          headerShown: false,
-          presentation: 'modal',
-        }}
-      />
-      <TabStack.Screen
-        name="ProductDetailScreen"
-        component={ProductDetailScreen}
-        options={{headerShown: false}}
-      />
-    </TabStack.Navigator>
-  );
-}
+// function TabStackScreen() {
+//   return (
+//     <TabStack.Navigator initialRouteName="HomeScreen">
+//       <TabStack.Screen
+//         name="HomeScreen"
+//         component={HomeScreen}
+//         options={{
+//           headerShown: false,
+//           presentation: 'modal',
+//         }}
+//       />
+//       <TabStack.Screen
+//         name="ProductDetailScreen"
+//         component={ProductDetailScreen}
+//         options={{headerShown: false}}
+//       />
+//     </TabStack.Navigator>
+//   );
+// }
 
 function TabNavigator() {
   const {user} = useContext(AppContext);
@@ -61,8 +61,8 @@ function TabNavigator() {
         tabBarInactiveBackgroundColor: 'pink',
       }}>
       <Tab.Screen
-        name="TabStackScreen"
-        component={TabStackScreen}
+        name="HomeScreen"
+        component={HomeScreen}
         options={{
           headerShown: false,
           tabBarIcon: props => (
