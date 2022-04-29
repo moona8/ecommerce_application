@@ -9,7 +9,8 @@ const App = () => {
   const [products, setProducts] = useState([]);
 
   return (
-    <AppContext.Provider value={{user, setUser, orders, setOrders,products, setProducts}}   >
+    <AppContext.Provider
+      value={{user, setUser, orders, setOrders, products, setProducts}}>
       <NavigationContainer>
         <Navigation />
       </NavigationContainer>
