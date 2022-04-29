@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {View, Text, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-89
+
 import Onboarding from 'react-native-onboarding-swiper';
 
 const OnBoardingScreen = () => {
