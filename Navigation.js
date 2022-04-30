@@ -78,7 +78,7 @@ function TabNavigator() {
         name="CartScreen"
         component={CartScreen}
         options={{
-          tabBarBadge: user.cartKeys ?user.cartKeys.length:0 ,
+          tabBarBadge: user?.cartKeys ? user.cartKeys.length : 0,
           tabBarIcon: props => (
             <Ionicons
               name="md-cart-outline"
@@ -127,21 +127,20 @@ const LoadingPage = () => {
 };
 
 const Navigation = () => {
-  const {setUser,setProducts} = useContext(AppContext);
+  const {setUser, setProducts} = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
-  
   const _getUserData = () => {
     getData()
       .then(user => {
         if (user) {
-          const data = JSON.parse(user)
-              firebaseDB.ref(`/users/${data.uid}`).on('value', snap => {
-          setUser(getFormattedUser(snap.val()));
-          setLoading(false);
-          navigation.navigate('TabNav');
-        });
+          const data = JSON.parse(user);
+          firebaseDB.ref(`/users/${data.uid}`).on('value', snap => {
+            setUser(getFormattedUser(snap.val()));
+            setLoading(false);
+            navigation.navigate('TabNav');
+          });
           // setUser(JSON.parse(user));
           // navigation.navigate('TabNav');
         }
@@ -151,18 +150,21 @@ const Navigation = () => {
         setLoading(false);
       });
   };
-  const getProducts=()=>{
-    firebaseDB.ref("/products").get()
-    .then((snap)=>{
-      console.log(snap.val(), "before");
-      const products=Object.values(snap.val())
-      console.log(products, "after");
-      setProducts(products)})
-    .catch((e)=>console.log(e))
-  }
+  const getProducts = () => {
+    firebaseDB
+      .ref('/products')
+      .get()
+      .then(snap => {
+        console.log(snap.val(), 'before');
+        const products = Object.values(snap.val());
+        console.log(products, 'after');
+        setProducts(products);
+      })
+      .catch(e => console.log(e));
+  };
   useEffect(() => {
     //loading
-    getProducts()
+    getProducts();
     _getUserData();
 
     // firebaseAuth.onAuthStateChanged(user => {
@@ -180,10 +182,22 @@ const Navigation = () => {
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="OnBoardingScreen" component={loading ? LoadingPage : OnBoardingScreen} />
-      <Stack.Screen name="LoginScreen" component={loading ? LoadingPage : LoginScreen} />
-      <Stack.Screen name="SignupScreen" component={loading ? LoadingPage : SignupScreen} />
-      <Stack.Screen name="TabNav" component={loading ? LoadingPage : TabNavigator} />
+      <Stack.Screen
+        name="OnBoardingScreen"
+        component={loading ? LoadingPage : OnBoardingScreen}
+      />
+      <Stack.Screen
+        name="LoginScreen"
+        component={loading ? LoadingPage : LoginScreen}
+      />
+      <Stack.Screen
+        name="SignupScreen"
+        component={loading ? LoadingPage : SignupScreen}
+      />
+      <Stack.Screen
+        name="TabNav"
+        component={loading ? LoadingPage : TabNavigator}
+      />
     </Stack.Navigator>
   );
 };

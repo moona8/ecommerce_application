@@ -46,7 +46,7 @@ export default function HomeScreen({navigation}) {
     <View style={styles.containers}>
       {/*  catiories */}
       <View style={{backgroundColor: '#d1c4e9', height: 50}}>
-        <Text style={styles.header}>ECOMMERCE App</Text>
+        <Text style={styles.header}>ECOMMERCE APP</Text>
       </View>
       <View style={styles.picContainer}>
         <TouchableOpacity

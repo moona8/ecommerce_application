@@ -49,6 +49,9 @@ const CartScreen = () => {
       updatedCart = {...user.cart};
     }
     updatedCart[productId] = updatedCart[productId] - 1; // {001:1}
+    if(!updatedCart[productId]){
+      updatedCart[productId] = null
+    }
     firebaseDB
       .ref(`/users/${user.uid}`)
       .update({cart: updatedCart})
@@ -64,9 +67,6 @@ const CartScreen = () => {
     .reduce((partialSum, a) => partialSum + a, 0);
 
   const placeOrders = () => {
-    // () => {}
-
-    // arr.map(() => {})
     const orderItems = arr.map(item => ({
       productName: item.productName,
       productId: item.productId,
